@@ -1,0 +1,30 @@
+{
+    "name": "INTRANOTAS - Simulador de Promedio",
+    "short_name": "INTRANOTAS",
+    "description": "Simulador de Promedio Académico para estudiantes de la FIIS-UNI",
+    "start_url": "./intranotas.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#f8fafc",
+    "theme_color": "#00bcd4",
+    "lang": "es",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [],
+    "categories": [
+        "education",
+        "utilities"
+    ]
+}
