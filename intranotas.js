@@ -267,7 +267,7 @@ function toggleCurso(cursoId, ciclo) {
     const item = document.getElementById(`item-${cursoId}`);
 
     /* Buscar el curso tanto en ciclos numéricos como en electivos */
-    const cursosList = CURSOS_POR_CICLO[carreraSeleccionada][ciclo] || [];
+    const cursosList = CURSOS_POR_CICLO[carreraSeleccionada][parseInt(ciclo)] || CURSOS_POR_CICLO[carreraSeleccionada][ciclo] || [];
     let curso = cursosList.find(c => c.id === cursoId);
     if (!curso) {
         const electivos = CURSOS_POR_CICLO[carreraSeleccionada]['electivos'] || [];
