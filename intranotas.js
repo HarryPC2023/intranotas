@@ -292,7 +292,7 @@ function actualizarContadores() {
     for (let ciclo = 1; ciclo <= 10; ciclo++) {
         const contador = document.getElementById(`contador-ciclo-${ciclo}`);
         if (!contador) continue;
-        const cantidad = cursosSeleccionados.filter(c => c.cicloOrigen === ciclo).length;
+        const cantidad = cursosSeleccionados.filter(c => String(c.cicloOrigen) === String(ciclo)).length;
         contador.textContent = cantidad;
         contador.style.backgroundColor = cantidad > 0 ? '#10b981' : '#00bcd4';
     }
