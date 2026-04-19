@@ -224,7 +224,7 @@ function generarListaCursos(cursos, ciclo) {
     if (!cursos || cursos.length === 0) {
         return `<p style="font-size:0.8rem; color:#9ca3af; padding: 8px 0;">No hay cursos registrados para este ciclo.</p>`;
     }
-    return cursos.map(curso => `
+    return [...cursos].sort((a, b) => a.name.localeCompare(b.name)).map(curso => `
         <label class="curso-item" id="item-${curso.id}" onclick="event.stopPropagation()">
             <input
                 type="checkbox"
