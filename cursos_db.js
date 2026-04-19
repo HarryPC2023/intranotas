@@ -78,11 +78,11 @@ const CURSOS_POR_CICLO = {
             { id: 'sis_ip', code: 'SI503', name: 'Ingeniería de Procesos', credits: 3, formula_type: 'COMPUTACION_1_1_2', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'EP', 'EF', 'ES'] },
         ],
         6: [
-            { id: 'sis_sgf', code: 'GP601', name: 'Sistema y Gestión Financiera', credits: 3, formula_type: 'COMPUTACION_1_1_2', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'Monografia2', 'EP', 'EF', 'ES'] },
-            { id: 'sis_mpcv', code: 'SI603', name: 'Modelado de Procesos de Ciclo de Vida', credits: 3, formula_type: 'COMPUTACION_1_1_2', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'Monografia2', 'EP', 'EF', 'ES'] },
+            { id: 'sis_sgf', code: 'GP601', name: 'Sistema y Gestión Financiera', credits: 3, formula_type: 'TEORIA_ORGANIZACIONAL', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'Monografia2', 'EP', 'EF', 'ES'] },
+            { id: 'sis_mpcv', code: 'SI603', name: 'Modelado de Procesos de Ciclo de Vida', credits: 3, formula_type: 'TEORIA_ORGANIZACIONAL', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'Monografia2', 'EP', 'EF', 'ES'] },
             { id: 'sis_io2', code: 'SI601', name: 'Investigación de Operaciones II', credits: 3, formula_type: 'COMPUTACION_1_1_2', components: ['PC1', 'PC2', 'PC3', 'PC4', 'EP', 'EF', 'ES'] },
             { id: 'sis_din', code: 'SI602', name: 'Dinámica de Sistemas', credits: 3, formula_type: 'SOLO_PC', components: ['PC1', 'PC2', 'PC3', 'PC4'] },
-            { id: 'sis_ads', code: 'SI604', name: 'Análisis y Diseño de Sistemas', credits: 4, formula_type: 'COMPUTACION_1_1_2', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'Monografia2', 'EP', 'EF', 'ES'] },
+            { id: 'sis_ads', code: 'SI604', name: 'Análisis y Diseño de Sistemas', credits: 4, formula_type: 'TEORIA_ORGANIZACIONAL', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'Monografia2', 'EP', 'EF', 'ES'] },
             { id: 'sis_arc', code: 'SI607', name: 'Arquitectura Computacional y Redes', credits: 3, formula_type: 'COMPUTACION_1_1_2', components: ['PC1', 'PC2', 'PC3', 'PC4', 'EP', 'EF', 'ES'] },
         ],
         7: [
