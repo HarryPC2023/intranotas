@@ -640,7 +640,7 @@ function calcularNotaNecesaria(curso, prom_pc, ep, ef, es, notaFinalReal) {
     if (!simulador || !contenido) return;
 
     const esDobleEF = ['COMPUTACION_1_1_2', 'ALGORITMIA', 'FISICA_I', 'QUIMICA',
-        'MODELADO_DATOS', 'INGENIERIA_DATOS', 'TEORIA_ORGANIZACIONAL', 'TCS', 'ARQ_EMPRESARIAL'
+        'MODELADO_DATOS', 'INGENIERIA_DATOS', 'TEORIA_ORGANIZACIONAL', 'TCS', 'ARQ_EMPRESARIAL'].includes(curso.formula_type);
     const soloPC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV',
         'REALIDAD_NACIONAL_4PC', 'SOLO_PC'].includes(curso.formula_type);
     const soloExam = curso.formula_type === 'SOLO_EXAMENES';
