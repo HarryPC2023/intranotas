@@ -84,6 +84,7 @@ const CURSOS_POR_CICLO = {
             { id: 'sis_din', code: 'SI602', name: 'Dinámica de Sistemas', credits: 3, formula_type: 'SOLO_PC', components: ['PC1', 'PC2', 'PC3', 'PC4'] },
             { id: 'sis_ads', code: 'SI604', name: 'Análisis y Diseño de Sistemas', credits: 4, formula_type: 'TEORIA_ORGANIZACIONAL', components: ['PC1', 'PC2', 'PC3', 'PC4', 'Monografia1', 'Monografia2', 'EP', 'EF', 'ES'] },
             { id: 'sis_arc', code: 'SI607', name: 'Arquitectura Computacional y Redes', credits: 3, formula_type: 'COMPUTACION_1_1_2', components: ['PC1', 'PC2', 'PC3', 'PC4', 'EP', 'EF', 'ES'] },
+            { id: 'sis_arqe6', code: 'SI605', name: 'Arquitectura Empresarial', credits: 3, formula_type: 'ARQ_EMPRESARIAL', components: ['PC1', 'PC2', 'PC3', 'Monografia1', 'EP', 'EF', 'ES'] },
         ],
         7: [
             { id: 'sis_sc', code: 'GP709', name: 'Sistemas de Calidad', credits: 2, formula_type: 'ESTANDAR_1_1_1', components: ['PC1', 'PC2', 'PC3', 'PC4', 'EP', 'EF', 'ES'] },

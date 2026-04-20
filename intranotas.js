@@ -76,6 +76,11 @@ const COMPONENT_LAYOUT = {
         { comps: ['Monografia1', 'Monografia2'], grid: 'grid-2-cols' },
         { comps: ['EP', 'EF', 'ES'], grid: 'grid-4-cols' }
     ],
+    'ARQ_EMPRESARIAL': [
+        { comps: ['PC1', 'PC2', 'PC3'], grid: 'grid-4-cols' },
+        { comps: ['Monografia1'], grid: 'grid-2-cols' },
+        { comps: ['EP', 'EF', 'ES'], grid: 'grid-4-cols' }
+    ],
     'TCS_APLICADA': [
         { comps: ['PC1', 'PC2'], grid: 'grid-4-cols' },
         { comps: ['Monografia1', 'Monografia2'], grid: 'grid-2-cols' },
@@ -115,6 +120,11 @@ const COMPONENT_LAYOUT = {
     'FISICA_I': [
         { comps: ['PC1', 'PC2', 'PC3', 'PC4', 'PC5'], grid: 'grid-5-cols' },
         { comps: ['Lab1', 'Lab2', 'Lab3', 'Lab4', 'Lab5'], grid: 'grid-5-cols' },
+        { comps: ['EP', 'EF', 'ES'], grid: 'grid-4-cols' }
+    ],
+    'ARQ_EMPRESARIAL': [
+        { comps: ['PC1', 'PC2', 'PC3'], grid: 'grid-4-cols' },
+        { comps: ['Monografia1'], grid: 'grid-2-cols' },
         { comps: ['EP', 'EF', 'ES'], grid: 'grid-4-cols' }
     ],
     'FISICA_II': [
@@ -531,7 +541,13 @@ function calcularPromPCSistemasBlandos(pc1, mon1, mon2) {
 function calcularPromPCTCSEspecial(pc1, pc2, mon1, mon2) {
     return truncar([pc1, pc2, mon1, mon2].map(manejarVacio).reduce((a, b) => a + b, 0) / 4, 3);
 }
-
+function calcularPromPCArqEmpresarial(pc1, pc2, pc3, mon1) {
+    const pcs = [pc1, pc2, pc3].map(manejarVacio);
+    const tienePCs = [pc1, pc2, pc3].some(p => p !== null && p !== '' && !isNaN(p));
+    const tieneMon = mon1 !== null && mon1 !== '' && !isNaN(mon1);
+    if (!tienePCs && !tieneMon) return null;
+    return truncar((pcs.reduce((a, b) => a + b, 0) + manejarVacio(mon1)) / 4, 3);
+}
 function calcularPromPCBiologico(pc_raw, mon1) {
     const pcs = pc_raw.map(manejarVacio);
     return truncar((pcs.reduce((a, b) => a + b, 0) - Math.min(...pcs) + manejarVacio(mon1)) / 5, 3);
@@ -624,7 +640,7 @@ function calcularNotaNecesaria(curso, prom_pc, ep, ef, es, notaFinalReal) {
     if (!simulador || !contenido) return;
 
     const esDobleEF = ['COMPUTACION_1_1_2', 'ALGORITMIA', 'FISICA_I', 'QUIMICA',
-        'MODELADO_DATOS', 'INGENIERIA_DATOS', 'TEORIA_ORGANIZACIONAL', 'TCS'].includes(curso.formula_type);
+        'MODELADO_DATOS', 'INGENIERIA_DATOS', 'TEORIA_ORGANIZACIONAL', 'TCS', 'ARQ_EMPRESARIAL'
     const soloPC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV',
         'REALIDAD_NACIONAL_4PC', 'SOLO_PC'].includes(curso.formula_type);
     const soloExam = curso.formula_type === 'SOLO_EXAMENES';
