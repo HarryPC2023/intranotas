@@ -1288,7 +1288,23 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializarTema();
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-            .then(r => console.log('SW registrado:', r.scope))
+            .then(r => {
+                console.log('SW registrado:', r.scope);
+                r.onupdatefound = () => {
+                    const nuevoSW = r.installing;
+                    nuevoSW.onstatechange = () => {
+                        if (nuevoSW.state === 'installed' && navigator.serviceWorker.controller) {
+                            mostrarToastActualizacion();
+                        }
+                    };
+                };
+            })
             .catch(e => console.log('SW error:', e));
     }
 });
+
+function mostrarToastActualizacion() {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = '🔄 Nueva versión disponible. <strong style="cursor:pointer;text-decoration:underline;" onclick="window.location.reload()">Toca aquí para actualizar</strong>';
+    toast.classList.add('visible');
+}
