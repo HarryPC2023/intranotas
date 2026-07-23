@@ -55,6 +55,10 @@ const COMPONENT_LAYOUT = {
     'SOLO_PC': [
         { comps: ['PC1', 'PC2', 'PC3', 'PC4'], grid: 'grid-4-cols' }
     ],
+    'SOLO_PC_6': [
+        { comps: ['PC1', 'PC2', 'PC3', 'PC4'], grid: 'grid-4-cols' },
+        { comps: ['PC5', 'PC6'], grid: 'grid-2-cols' }
+    ],
     'SOLO_EXAMENES': [
         { comps: ['EP', 'EF', 'ES'], grid: 'grid-4-cols' }
     ],
@@ -120,11 +124,6 @@ const COMPONENT_LAYOUT = {
     'FISICA_I': [
         { comps: ['PC1', 'PC2', 'PC3', 'PC4', 'PC5'], grid: 'grid-5-cols' },
         { comps: ['Lab1', 'Lab2', 'Lab3', 'Lab4', 'Lab5'], grid: 'grid-5-cols' },
-        { comps: ['EP', 'EF', 'ES'], grid: 'grid-4-cols' }
-    ],
-    'ARQ_EMPRESARIAL': [
-        { comps: ['PC1', 'PC2', 'PC3'], grid: 'grid-4-cols' },
-        { comps: ['Monografia1'], grid: 'grid-2-cols' },
         { comps: ['EP', 'EF', 'ES'], grid: 'grid-4-cols' }
     ],
     'FISICA_II': [
@@ -523,6 +522,11 @@ function calcularPromPCComun(pc1, pc2, pc3, pc4) {
     return truncar((notas.reduce((a, b) => a + b, 0) - Math.min(...notas)) / 3, 3);
 }
 
+function calcularPromPCSolo6(pc1, pc2, pc3, pc4, pc5, pc6) {
+    const notas = [pc1, pc2, pc3, pc4, pc5, pc6].map(manejarVacio);
+    return truncar((notas.reduce((a, b) => a + b, 0) - Math.min(...notas)) / 5, 3);
+}
+
 function calcularPromPCRedaccion(pc1, pc2, pc3, pc4, mon1, mon2) {
     const pcs = [pc1, pc2, pc3, pc4].map(manejarVacio);
     const mons = [mon1, mon2].map(manejarVacio);
@@ -642,7 +646,7 @@ function calcularNotaNecesaria(curso, prom_pc, ep, ef, es, notaFinalReal) {
     const esDobleEF = ['COMPUTACION_1_1_2', 'ALGORITMIA', 'FISICA_I', 'QUIMICA',
         'MODELADO_DATOS', 'INGENIERIA_DATOS', 'TEORIA_ORGANIZACIONAL', 'TCS', 'ARQ_EMPRESARIAL'].includes(curso.formula_type);
     const soloPC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV',
-        'REALIDAD_NACIONAL_4PC', 'SOLO_PC'].includes(curso.formula_type);
+        'REALIDAD_NACIONAL_4PC', 'SOLO_PC', 'SOLO_PC_6'].includes(curso.formula_type);
     const soloExam = curso.formula_type === 'SOLO_EXAMENES';
 
     let html = '';
@@ -826,7 +830,7 @@ function calcularTodo() {
             return v === '' ? null : parseFloat(v);
         };
 
-        const pc = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5'].map(gn);
+        const pc = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6'].map(gn);
         const lab = ['Lab1', 'Lab2', 'Lab3', 'Lab4', 'Lab5', 'Lab6', 'Lab7', 'Lab8'].map(gn);
         const mon = ['Monografia1', 'Monografia2'].map(gn);
         const ep = gn('EP'), ef = gn('EF'), es = gn('ES');
@@ -834,7 +838,7 @@ function calcularTodo() {
         const tieneNotas = [...pc, ...lab, ...mon, ep, ef, es].some(n => n !== null);
         const tieneES = es !== null && es !== '' && !isNaN(es);
 
-        const soloPC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV', 'REALIDAD_NACIONAL_4PC', 'SOLO_PC'].includes(curso.formula_type);
+        const soloPC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV', 'REALIDAD_NACIONAL_4PC', 'SOLO_PC', 'SOLO_PC_6'].includes(curso.formula_type);
         const soloExam = curso.formula_type === 'SOLO_EXAMENES';
         const evaluacionesCompletas = tieneES || (soloPC && tieneNotas) || (soloExam && tieneES);
 
@@ -854,6 +858,10 @@ function calcularTodo() {
             case 'SOLO_PC':
             case 'REALIDAD_NACIONAL_4PC':
                 prom_pc = calcularPromPCComun(pc[0], pc[1], pc[2], pc[3]);
+                nota_final = calcularNotaFinalSoloPC(prom_pc); break;
+
+            case 'SOLO_PC_6':
+                prom_pc = calcularPromPCSolo6(pc[0], pc[1], pc[2], pc[3], pc[4], pc[5]);
                 nota_final = calcularNotaFinalSoloPC(prom_pc); break;
 
             case 'SOLO_EXAMENES':
@@ -911,6 +919,10 @@ function calcularTodo() {
             case 'SISTEMAS_BLANDOS':
                 prom_pc = calcularPromPCSistemasBlandos(pc[0], mon[0], mon[1]);
                 nota_final = calcularNotaFinalEstandar(prom_pc, ep, ef, es); break;
+
+            case 'ARQ_EMPRESARIAL':
+                prom_pc = calcularPromPCArqEmpresarial(pc[0], pc[1], pc[2], mon[0]);
+                nota_final = calcularNotaFinalDobleEF(prom_pc, ep, ef, es); break;
 
             default:
                 prom_pc = calcularPromPCComun(pc[0], pc[1], pc[2], pc[3]);
