@@ -1478,7 +1478,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const nuevoSW = r.installing;
                     nuevoSW.onstatechange = () => {
                         if (nuevoSW.state === 'installed' && navigator.serviceWorker.controller) {
-                            mostrarToastActualizacion();
+                            mostrarBannerActualizacion();
                         }
                     };
                 };
@@ -1522,8 +1522,23 @@ function intentarRestaurarSesion() {
     }
 }
 
-function mostrarToastActualizacion() {
-    const toast = document.getElementById('toast');
-    toast.innerHTML = '🔄 Nueva versión disponible. <strong style="cursor:pointer;text-decoration:underline;" onclick="window.location.reload()">Toca aquí para actualizar</strong>';
-    toast.classList.add('visible');
+function mostrarBannerActualizacion() {
+    if (document.getElementById('banner-actualizacion')) return; // ya está mostrado, no duplicar
+
+    const banner = document.createElement('div');
+    banner.id = 'banner-actualizacion';
+    banner.className = 'banner-actualizacion';
+    banner.innerHTML = `
+        <span class="banner-actualizacion-texto">🔄 Hay una nueva versión de INTRANOTAS disponible</span>
+        <div class="banner-actualizacion-acciones">
+            <button class="banner-actualizacion-btn" onclick="window.location.reload()">Actualizar ahora</button>
+            <button class="banner-actualizacion-cerrar" onclick="cerrarBannerActualizacion()" aria-label="Cerrar aviso">✕</button>
+        </div>
+    `;
+    document.body.appendChild(banner);
+}
+
+function cerrarBannerActualizacion() {
+    const banner = document.getElementById('banner-actualizacion');
+    if (banner) banner.remove();
 }
