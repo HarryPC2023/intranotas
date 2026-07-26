@@ -134,6 +134,15 @@ const COMPONENT_LAYOUT = {
 };
 
 /* ============================================================
+   ARQUETIPOS DE FÓRMULA (compartidos entre simuladores)
+   ============================================================ */
+const FORMULAS_DOBLE_EF = ['COMPUTACION_1_1_2', 'ALGORITMIA', 'FISICA_I', 'QUIMICA',
+    'MODELADO_DATOS', 'INGENIERIA_DATOS', 'TEORIA_ORGANIZACIONAL', 'TCS', 'ARQ_EMPRESARIAL'];
+const FORMULAS_SOLO_PC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV',
+    'REALIDAD_NACIONAL_4PC', 'SOLO_PC', 'SOLO_PC_6'];
+const FORMULAS_SOLO_EXAMENES = ['SOLO_EXAMENES'];
+
+/* ============================================================
    VARIABLES GLOBALES DE ESTADO
    ============================================================ */
 let carreraSeleccionada = null;
@@ -398,6 +407,8 @@ function generarSimulador() {
     html += `</div>`;
     contenedor.innerHTML = html;
     cargarNotasGuardadas();
+    cargarMetasGuardadas();
+    cursosSeleccionados.forEach(c => calcularMetaCurso(c.id));
 }
 
 function generarTarjetaCurso(curso) {
@@ -467,8 +478,169 @@ function generarInputsNotas(curso, layout) {
             <div class="simulador-titulo">🎯 ¿QUÉ NOTA NECESITO PARA APROBAR?</div>
             <div class="simulador-contenido" id="simulador-contenido-${curso.id}"></div>
         </div>
+        ${generarSeccionMetaCurso(curso)}
     `;
     return html;
+}
+
+/* ============================================================
+   META DEL CURSO — Calculadora independiente del registro real
+   ============================================================ */
+function generarSeccionMetaCurso(curso) {
+    const soloPC = FORMULAS_SOLO_PC.includes(curso.formula_type);
+    const soloExam = FORMULAS_SOLO_EXAMENES.includes(curso.formula_type);
+
+    let contenidoHTML = `
+        <div class="meta-input-group">
+            <label>Promedio final que quiero</label>
+            <input type="number" class="meta-input-final" id="meta-final-${curso.id}"
+                min="0" max="20" step="0.1" value="14"
+                oninput="calcularMetaCurso('${curso.id}')">
+        </div>
+    `;
+
+    if (soloPC) {
+        contenidoHTML += `
+            <div class="meta-nota-ayuda" style="margin-left:0;">
+                Este curso se evalúa solo con prácticas, así que tu meta ES directamente
+                el Prom. PC que necesitas alcanzar (no hay examen parcial que calcular).
+            </div>
+        `;
+    } else {
+        if (!soloExam) {
+            contenidoHTML += `
+                <div class="meta-slider-group">
+                    <span class="meta-slider-label">Si en PC saco</span>
+                    <input type="range" class="meta-slider" id="meta-pp-${curso.id}"
+                        min="0" max="20" step="0.1" value="14"
+                        oninput="calcularMetaCurso('${curso.id}')">
+                    <span class="meta-slider-valor" id="meta-pp-valor-${curso.id}">14.0</span>
+                </div>
+                <div class="meta-nota-ayuda">
+                    Representa tu Promedio de Prácticas (PP) ya calculado —el promedio de tus
+                    3 mejores notas de 4— tal como entra en la fórmula del curso.
+                </div>
+            `;
+        }
+        contenidoHTML += `
+            <div class="meta-slider-group">
+                <span class="meta-slider-label">Y en EF saco</span>
+                <input type="range" class="meta-slider" id="meta-ef-${curso.id}"
+                    min="0" max="20" step="0.1" value="14"
+                    oninput="calcularMetaCurso('${curso.id}')">
+                <span class="meta-slider-valor" id="meta-ef-valor-${curso.id}">14.0</span>
+            </div>
+            <div class="meta-resultado">
+                <div class="meta-resultado-label">Necesitas al menos esto en tu examen parcial</div>
+                <div class="meta-resultado-valor" id="meta-resultado-${curso.id}">--</div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="meta-curso-toggle" onclick="toggleMetaCurso('${curso.id}')">
+            <span>🎯 META DEL CURSO</span>
+            <span class="meta-curso-flecha" id="meta-flecha-${curso.id}">▼</span>
+        </div>
+        <div class="meta-curso-contenido" id="meta-curso-${curso.id}" style="display:none;">
+            ${contenidoHTML}
+        </div>
+    `;
+}
+
+function toggleMetaCurso(cursoId) {
+    const contenido = document.getElementById(`meta-curso-${cursoId}`);
+    const flecha = document.getElementById(`meta-flecha-${cursoId}`);
+    if (!contenido) return;
+    const abrir = contenido.style.display !== 'block';
+    contenido.style.display = abrir ? 'block' : 'none';
+    if (flecha) flecha.textContent = abrir ? '▲' : '▼';
+}
+
+function calcularMetaCurso(cursoId) {
+    const curso = cursosSeleccionados.find(c => c.id === cursoId);
+    if (!curso) return;
+
+    const metaEl = document.getElementById(`meta-final-${cursoId}`);
+    if (!metaEl) return;
+    const metaFinal = parseFloat(metaEl.value);
+
+    const soloPC = FORMULAS_SOLO_PC.includes(curso.formula_type);
+    if (soloPC) {
+        guardarMetaCurso(cursoId, { metaFinal, pp: null, ef: null });
+        return;
+    }
+
+    const resultadoEl = document.getElementById(`meta-resultado-${cursoId}`);
+    if (isNaN(metaFinal) || !resultadoEl) return;
+
+    const esDobleEF = FORMULAS_DOBLE_EF.includes(curso.formula_type);
+    const soloExam = FORMULAS_SOLO_EXAMENES.includes(curso.formula_type);
+
+    const efSlider = document.getElementById(`meta-ef-${cursoId}`);
+    const efValorEl = document.getElementById(`meta-ef-valor-${cursoId}`);
+    const ef = parseFloat(efSlider.value);
+    if (efValorEl) efValorEl.textContent = ef.toFixed(1);
+
+    let pp = null;
+    if (!soloExam) {
+        const ppSlider = document.getElementById(`meta-pp-${cursoId}`);
+        const ppValorEl = document.getElementById(`meta-pp-valor-${cursoId}`);
+        pp = parseFloat(ppSlider.value);
+        if (ppValorEl) ppValorEl.textContent = pp.toFixed(1);
+    }
+
+    let epNecesario;
+    if (soloExam) {
+        epNecesario = (3 * metaFinal) - (2 * ef);
+    } else if (esDobleEF) {
+        epNecesario = (4 * metaFinal) - pp - (2 * ef);
+    } else {
+        epNecesario = (3 * metaFinal) - pp - ef;
+    }
+
+    if (epNecesario > 20) {
+        resultadoEl.textContent = '⚠️ Meta no alcanzable con estos supuestos';
+        resultadoEl.classList.add('meta-no-alcanzable');
+    } else {
+        resultadoEl.textContent = Math.max(0, epNecesario).toFixed(1);
+        resultadoEl.classList.remove('meta-no-alcanzable');
+    }
+
+    guardarMetaCurso(cursoId, { metaFinal, pp, ef });
+}
+
+function guardarMetaCurso(cursoId, datos) {
+    const guardadas = localStorage.getItem('intranotas_metas');
+    const metas = guardadas ? JSON.parse(guardadas) : {};
+    metas[cursoId] = datos;
+    localStorage.setItem('intranotas_metas', JSON.stringify(metas));
+}
+
+function cargarMetasGuardadas() {
+    const guardadas = localStorage.getItem('intranotas_metas');
+    if (!guardadas) return;
+    const metas = JSON.parse(guardadas);
+    cursosSeleccionados.forEach(curso => {
+        const datos = metas[curso.id];
+        if (!datos) return;
+        const metaEl = document.getElementById(`meta-final-${curso.id}`);
+        if (metaEl && datos.metaFinal != null) metaEl.value = datos.metaFinal;
+        const ppEl = document.getElementById(`meta-pp-${curso.id}`);
+        if (ppEl && datos.pp != null) ppEl.value = datos.pp;
+        const efEl = document.getElementById(`meta-ef-${curso.id}`);
+        if (efEl && datos.ef != null) efEl.value = datos.ef;
+    });
+}
+
+function limpiarMetasCursosNoSeleccionados() {
+    const guardadas = localStorage.getItem('intranotas_metas');
+    if (!guardadas) return;
+    const metas = JSON.parse(guardadas);
+    const ids = cursosSeleccionados.map(c => c.id);
+    const filtradas = {};
+    Object.keys(metas).forEach(id => { if (ids.includes(id)) filtradas[id] = metas[id]; });
+    localStorage.setItem('intranotas_metas', JSON.stringify(filtradas));
 }
 
 function togglePanelNotas(cursoId) {
@@ -643,11 +815,9 @@ function calcularNotaNecesaria(curso, prom_pc, ep, ef, es, notaFinalReal) {
     const contenido = document.getElementById(`simulador-contenido-${curso.id}`);
     if (!simulador || !contenido) return;
 
-    const esDobleEF = ['COMPUTACION_1_1_2', 'ALGORITMIA', 'FISICA_I', 'QUIMICA',
-        'MODELADO_DATOS', 'INGENIERIA_DATOS', 'TEORIA_ORGANIZACIONAL', 'TCS', 'ARQ_EMPRESARIAL'].includes(curso.formula_type);
-    const soloPC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV',
-        'REALIDAD_NACIONAL_4PC', 'SOLO_PC', 'SOLO_PC_6'].includes(curso.formula_type);
-    const soloExam = curso.formula_type === 'SOLO_EXAMENES';
+    const esDobleEF = FORMULAS_DOBLE_EF.includes(curso.formula_type);
+    const soloPC = FORMULAS_SOLO_PC.includes(curso.formula_type);
+    const soloExam = FORMULAS_SOLO_EXAMENES.includes(curso.formula_type);
 
     let html = '';
 
@@ -838,8 +1008,8 @@ function calcularTodo() {
         const tieneNotas = [...pc, ...lab, ...mon, ep, ef, es].some(n => n !== null);
         const tieneES = es !== null && es !== '' && !isNaN(es);
 
-        const soloPC = ['REDACCION_BASE', 'REALIDAD_NACIONAL', 'ETICA', 'METODOLOGIA_INV', 'REALIDAD_NACIONAL_4PC', 'SOLO_PC', 'SOLO_PC_6'].includes(curso.formula_type);
-        const soloExam = curso.formula_type === 'SOLO_EXAMENES';
+        const soloPC = FORMULAS_SOLO_PC.includes(curso.formula_type);
+        const soloExam = FORMULAS_SOLO_EXAMENES.includes(curso.formula_type);
         const evaluacionesCompletas = tieneES || (soloPC && tieneNotas) || (soloExam && tieneES);
 
         let prom_pc = null, nota_final = null;
@@ -996,6 +1166,7 @@ function guardarConfiguracion() {
     localStorage.setItem('intranotas_ciclo', cicloSeleccionado);
     localStorage.setItem('intranotas_cursos', JSON.stringify(cursosSeleccionados));
     limpiarNotasCursosNoSeleccionados();
+    limpiarMetasCursosNoSeleccionados();
 }
 
 function restaurarSeleccionGuardada() {
@@ -1122,6 +1293,7 @@ function confirmarResetearApp() {
     localStorage.removeItem('intranotas_ciclo');
     localStorage.removeItem('intranotas_cursos');
     localStorage.removeItem('intranotas_notas');
+    localStorage.removeItem('intranotas_metas');
     carreraSeleccionada = null;
     cicloSeleccionado = null;
     cursosSeleccionados = [];
