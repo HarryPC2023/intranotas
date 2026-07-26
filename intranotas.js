@@ -1313,7 +1313,42 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(e => console.log('SW error:', e));
     }
+    intentarRestaurarSesion();
 });
+
+/* ============================================================
+   RESTAURAR SESIÓN GUARDADA (saltar directo al simulador)
+   ============================================================ */
+function intentarRestaurarSesion() {
+    const carreraG = localStorage.getItem('intranotas_carrera');
+    const cicloG = localStorage.getItem('intranotas_ciclo');
+    const cursosG = localStorage.getItem('intranotas_cursos');
+
+    if (!carreraG || !cicloG || !cursosG) return; // Sin sesión previa: se queda en la bienvenida
+
+    try {
+        const cursosGuardados = JSON.parse(cursosG);
+        if (!Array.isArray(cursosGuardados) || cursosGuardados.length === 0) return;
+
+        carreraSeleccionada = carreraG;
+        cicloSeleccionado = parseInt(cicloG);
+        cursosSeleccionados = cursosGuardados;
+
+        const labelCarrera = document.getElementById('nombre-carrera-activa');
+        if (labelCarrera) labelCarrera.textContent = NOMBRES_CARRERAS[carreraSeleccionada];
+
+        // Prepara la Pantalla 3 en segundo plano por si el usuario pulsa "Cambiar cursos"
+        generarAcordeones();
+        inicializarSelectoresCiclo();
+        restaurarSeleccionGuardada();
+
+        // Va directo al simulador con las notas ya cargadas
+        irAPantalla(4);
+        generarSimulador();
+    } catch (e) {
+        console.log('No se pudo restaurar la sesión:', e);
+    }
+}
 
 function mostrarToastActualizacion() {
     const toast = document.getElementById('toast');
