@@ -488,7 +488,6 @@ function generarInputsNotas(curso, layout) {
    ============================================================ */
 function generarSeccionMetaCurso(curso) {
     const soloPC = FORMULAS_SOLO_PC.includes(curso.formula_type);
-    const soloExam = FORMULAS_SOLO_EXAMENES.includes(curso.formula_type);
 
     let contenidoHTML = `
         <div class="meta-input-group">
@@ -503,36 +502,19 @@ function generarSeccionMetaCurso(curso) {
         contenidoHTML += `
             <div class="meta-nota-ayuda" style="margin-left:0;">
                 Este curso se evalúa solo con prácticas, así que tu meta ES directamente
-                el Prom. PC que necesitas alcanzar (no hay examen parcial que calcular).
+                el Prom. PC que necesitas alcanzar (no hay examen parcial ni final que calcular).
             </div>
         `;
     } else {
-        if (!soloExam) {
-            contenidoHTML += `
-                <div class="meta-slider-group">
-                    <span class="meta-slider-label">Si en Prom. PC saco</span>
-                    <input type="range" class="meta-slider" id="meta-pp-${curso.id}"
-                        min="0" max="20" step="0.1" value="14"
-                        oninput="calcularMetaCurso('${curso.id}')">
-                    <span class="meta-slider-valor" id="meta-pp-valor-${curso.id}">14.0</span>
-                </div>
-                <div class="meta-nota-ayuda">
-                    Representa tu Promedio de Prácticas (PP) ya calculado —el promedio de tus
-                    3 mejores notas de 4— tal como entra en la fórmula del curso.
-                </div>
-            `;
-        }
         contenidoHTML += `
-            <div class="meta-slider-group">
-                <span class="meta-slider-label">Y en EF saco</span>
-                <input type="range" class="meta-slider" id="meta-ef-${curso.id}"
-                    min="0" max="20" step="0.1" value="14"
-                    oninput="calcularMetaCurso('${curso.id}')">
-                <span class="meta-slider-valor" id="meta-ef-valor-${curso.id}">14.0</span>
+            <div class="meta-modo-toggle" id="meta-toggle-${curso.id}" data-modo="EP">
+                <button type="button" class="meta-modo-btn activo" id="meta-modo-ep-${curso.id}"
+                    onclick="cambiarModoMeta('${curso.id}', 'EP')">Calcular EP</button>
+                <button type="button" class="meta-modo-btn" id="meta-modo-ef-${curso.id}"
+                    onclick="cambiarModoMeta('${curso.id}', 'EF')">Calcular EF</button>
             </div>
-            <div class="meta-resultado">
-                <div class="meta-resultado-label">Necesitas al menos esto en tu examen parcial</div>
-                <div class="meta-resultado-valor" id="meta-resultado-${curso.id}">--</div>
+            <div id="meta-sliders-${curso.id}">
+                ${generarSlidersMeta(curso, 'EP')}
             </div>
         `;
     }
@@ -546,6 +528,65 @@ function generarSeccionMetaCurso(curso) {
             ${contenidoHTML}
         </div>
     `;
+}
+
+function generarSlidersMeta(curso, modo) {
+    const soloExam = FORMULAS_SOLO_EXAMENES.includes(curso.formula_type);
+    // Si modo='EP', el EF es el valor conocido/supuesto y se calcula el EP (y viceversa).
+    const varConocida = modo === 'EP' ? 'EF' : 'EP';
+    const nombreCalcular = modo === 'EP' ? 'examen parcial (EP)' : 'examen final (EF)';
+
+    let html = '';
+
+    if (!soloExam) {
+        html += `
+            <div class="meta-slider-group">
+                <span class="meta-slider-label">Si en Prom. PC saco</span>
+                <input type="range" class="meta-slider" id="meta-pp-${curso.id}"
+                    min="0" max="20" step="0.1" value="14"
+                    oninput="calcularMetaCurso('${curso.id}')">
+                <span class="meta-slider-valor" id="meta-pp-valor-${curso.id}">14.0</span>
+            </div>
+            <div class="meta-nota-ayuda">
+                Representa tu Promedio de Prácticas (PP) ya calculado —el promedio de tus
+                3 mejores notas de 4— tal como entra en la fórmula del curso.
+            </div>
+        `;
+    }
+
+    html += `
+        <div class="meta-slider-group">
+            <span class="meta-slider-label">Y en ${varConocida} saco</span>
+            <input type="range" class="meta-slider" id="meta-conocida-${curso.id}"
+                min="0" max="20" step="0.1" value="14"
+                oninput="calcularMetaCurso('${curso.id}')">
+            <span class="meta-slider-valor" id="meta-conocida-valor-${curso.id}">14.0</span>
+        </div>
+        <div class="meta-resultado">
+            <div class="meta-resultado-label">Necesitas al menos esto en tu ${nombreCalcular}</div>
+            <div class="meta-resultado-valor" id="meta-resultado-${curso.id}">--</div>
+        </div>
+    `;
+
+    return html;
+}
+
+function cambiarModoMeta(cursoId, modo) {
+    const curso = cursosSeleccionados.find(c => c.id === cursoId);
+    if (!curso) return;
+
+    const toggle = document.getElementById(`meta-toggle-${cursoId}`);
+    if (toggle) toggle.dataset.modo = modo;
+
+    const btnEP = document.getElementById(`meta-modo-ep-${cursoId}`);
+    const btnEF = document.getElementById(`meta-modo-ef-${cursoId}`);
+    if (btnEP) btnEP.classList.toggle('activo', modo === 'EP');
+    if (btnEF) btnEF.classList.toggle('activo', modo === 'EF');
+
+    const contenedor = document.getElementById(`meta-sliders-${cursoId}`);
+    if (contenedor) contenedor.innerHTML = generarSlidersMeta(curso, modo);
+
+    calcularMetaCurso(cursoId);
 }
 
 function toggleMetaCurso(cursoId) {
@@ -567,7 +608,7 @@ function calcularMetaCurso(cursoId) {
 
     const soloPC = FORMULAS_SOLO_PC.includes(curso.formula_type);
     if (soloPC) {
-        guardarMetaCurso(cursoId, { metaFinal, pp: null, ef: null });
+        guardarMetaCurso(cursoId, { metaFinal });
         return;
     }
 
@@ -577,10 +618,14 @@ function calcularMetaCurso(cursoId) {
     const esDobleEF = FORMULAS_DOBLE_EF.includes(curso.formula_type);
     const soloExam = FORMULAS_SOLO_EXAMENES.includes(curso.formula_type);
 
-    const efSlider = document.getElementById(`meta-ef-${cursoId}`);
-    const efValorEl = document.getElementById(`meta-ef-valor-${cursoId}`);
-    const ef = parseFloat(efSlider.value);
-    if (efValorEl) efValorEl.textContent = ef.toFixed(1);
+    const toggle = document.getElementById(`meta-toggle-${cursoId}`);
+    const modo = toggle ? toggle.dataset.modo : 'EP';
+
+    const conocidaSlider = document.getElementById(`meta-conocida-${cursoId}`);
+    const conocidaValorEl = document.getElementById(`meta-conocida-valor-${cursoId}`);
+    if (!conocidaSlider) return;
+    const valorConocida = parseFloat(conocidaSlider.value);
+    if (conocidaValorEl) conocidaValorEl.textContent = valorConocida.toFixed(1);
 
     let pp = null;
     if (!soloExam) {
@@ -590,24 +635,31 @@ function calcularMetaCurso(cursoId) {
         if (ppValorEl) ppValorEl.textContent = pp.toFixed(1);
     }
 
-    let epNecesario;
+    let necesario;
     if (soloExam) {
-        epNecesario = (3 * metaFinal) - (2 * ef);
+        // NF = (EP + 2·EF) / 3
+        necesario = modo === 'EP'
+            ? (3 * metaFinal) - (2 * valorConocida)      // EF conocido -> calcular EP
+            : ((3 * metaFinal) - valorConocida) / 2;     // EP conocido -> calcular EF
     } else if (esDobleEF) {
-        epNecesario = (4 * metaFinal) - pp - (2 * ef);
+        // NF = (PP + EP + 2·EF) / 4
+        necesario = modo === 'EP'
+            ? (4 * metaFinal) - pp - (2 * valorConocida)     // EF conocido -> calcular EP
+            : ((4 * metaFinal) - pp - valorConocida) / 2;    // EP conocido -> calcular EF
     } else {
-        epNecesario = (3 * metaFinal) - pp - ef;
+        // NF = (PP + EP + EF) / 3 (simétrico, misma fórmula para ambos modos)
+        necesario = (3 * metaFinal) - pp - valorConocida;
     }
 
-    if (epNecesario > 20) {
+    if (necesario > 20) {
         resultadoEl.textContent = '⚠️ Meta no alcanzable con estos supuestos';
         resultadoEl.classList.add('meta-no-alcanzable');
     } else {
-        resultadoEl.textContent = Math.max(0, epNecesario).toFixed(1);
+        resultadoEl.textContent = Math.max(0, necesario).toFixed(1);
         resultadoEl.classList.remove('meta-no-alcanzable');
     }
 
-    guardarMetaCurso(cursoId, { metaFinal, pp, ef });
+    guardarMetaCurso(cursoId, { metaFinal, modo, pp, conocida: valorConocida });
 }
 
 function guardarMetaCurso(cursoId, datos) {
@@ -624,12 +676,19 @@ function cargarMetasGuardadas() {
     cursosSeleccionados.forEach(curso => {
         const datos = metas[curso.id];
         if (!datos) return;
+
         const metaEl = document.getElementById(`meta-final-${curso.id}`);
         if (metaEl && datos.metaFinal != null) metaEl.value = datos.metaFinal;
+
+        if (datos.modo === 'EF') {
+            cambiarModoMeta(curso.id, 'EF'); // regenera los sliders en modo EF antes de restaurar valores
+        }
+
         const ppEl = document.getElementById(`meta-pp-${curso.id}`);
         if (ppEl && datos.pp != null) ppEl.value = datos.pp;
-        const efEl = document.getElementById(`meta-ef-${curso.id}`);
-        if (efEl && datos.ef != null) efEl.value = datos.ef;
+
+        const conocidaEl = document.getElementById(`meta-conocida-${curso.id}`);
+        if (conocidaEl && datos.conocida != null) conocidaEl.value = datos.conocida;
     });
 }
 
