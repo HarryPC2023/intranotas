@@ -751,7 +751,7 @@ body {
 }
 
 .panel-notas.abierto {
-    max-height: 500px;
+    max-height: 1400px;
     opacity: 1;
     padding: 16px;
 }
