@@ -510,7 +510,7 @@ function generarSeccionMetaCurso(curso) {
         if (!soloExam) {
             contenidoHTML += `
                 <div class="meta-slider-group">
-                    <span class="meta-slider-label">Si en PC saco</span>
+                    <span class="meta-slider-label">Si en Prom. PC saco</span>
                     <input type="range" class="meta-slider" id="meta-pp-${curso.id}"
                         min="0" max="20" step="0.1" value="14"
                         oninput="calcularMetaCurso('${curso.id}')">
