@@ -1581,3 +1581,37 @@ body {
 .meta-modo-btn:hover:not(.activo) {
     background: #ede9fe;
 }
+
+/* ============================================================
+   META DEL CURSO — Adaptación para móviles
+   ============================================================ */
+@media (max-width: 480px) {
+    .meta-slider-group {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .meta-slider-label {
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    .meta-slider {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .meta-slider-valor {
+        width: auto;
+        min-width: 36px;
+        flex-shrink: 0;
+    }
+
+    .meta-nota-ayuda {
+        margin-left: 0;
+    }
+
+    .meta-curso-contenido {
+        overflow-x: hidden;
+    }
+}
