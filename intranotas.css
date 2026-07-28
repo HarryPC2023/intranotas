@@ -1615,3 +1615,22 @@ body {
         overflow-x: hidden;
     }
 }
+
+/* ============================================================
+   CABECERA DEL SIMULADOR — Adaptación para móviles
+   ============================================================ */
+@media (max-width: 480px) {
+    .cabecera-simulador {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .titulo-ciclo-simulador {
+        width: 100%;
+    }
+
+    .btn-volver {
+        align-self: flex-end;
+    }
+}
