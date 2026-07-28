@@ -1586,14 +1586,68 @@ function mostrarBannerActualizacion() {
 
     const banner = document.createElement('div');
     banner.id = 'banner-actualizacion';
-    banner.className = 'banner-actualizacion';
-    banner.innerHTML = `
-        <span class="banner-actualizacion-texto">🔄 Hay una nueva versión de INTRANOTAS disponible</span>
-        <div class="banner-actualizacion-acciones">
-            <button class="banner-actualizacion-btn" onclick="window.location.reload()">Actualizar ahora</button>
-            <button class="banner-actualizacion-cerrar" onclick="cerrarBannerActualizacion()" aria-label="Cerrar aviso">✕</button>
-        </div>
+    banner.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999999;
+        background: linear-gradient(90deg, #0369a1, #0284c7);
+        color: #ffffff;
+        padding: 10px 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+        font-family: 'Poppins', Arial, sans-serif;
     `;
+
+    const texto = document.createElement('span');
+    texto.textContent = '🔄 Hay una nueva versión de INTRANOTAS disponible';
+    texto.style.cssText = `
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #ffffff;
+    `;
+
+    const acciones = document.createElement('div');
+    acciones.style.cssText = 'display:flex; align-items:center; gap:8px;';
+
+    const btnActualizar = document.createElement('button');
+    btnActualizar.textContent = 'Actualizar ahora';
+    btnActualizar.style.cssText = `
+        background: #ffffff;
+        color: #0369a1;
+        border: none;
+        border-radius: 20px;
+        padding: 7px 16px;
+        font-family: 'Poppins', Arial, sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+    `;
+    btnActualizar.onclick = () => window.location.reload();
+
+    const btnCerrar = document.createElement('button');
+    btnCerrar.textContent = '✕';
+    btnCerrar.setAttribute('aria-label', 'Cerrar aviso');
+    btnCerrar.style.cssText = `
+        background: transparent;
+        color: #ffffff;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 2px 8px;
+        opacity: 0.85;
+    `;
+    btnCerrar.onclick = () => cerrarBannerActualizacion();
+
+    acciones.appendChild(btnActualizar);
+    acciones.appendChild(btnCerrar);
+    banner.appendChild(texto);
+    banner.appendChild(acciones);
     document.body.appendChild(banner);
 }
 
