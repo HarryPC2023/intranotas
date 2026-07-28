@@ -1634,3 +1634,13 @@ body {
         align-self: flex-end;
     }
 }
+
+/* ============================================================
+   ESPACIO PARA EL SELECTOR DE TEMA FIJO — Móviles
+   ============================================================ */
+@media (max-width: 480px) {
+    .pantalla-simulador,
+    .pantalla-configuracion {
+        padding-top: 64px;
+    }
+}
