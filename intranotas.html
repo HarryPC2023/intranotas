@@ -7,7 +7,7 @@
     <title>INTRANOTAS</title>
 
     <meta name="description" content="Simulador de Promedio Académico - Universidad Nacional de Ingeniería">
-    <meta name="theme-color" content="#00bcd4">
+    <meta name="theme-color" content="#FFFDF9">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="INTRANOTAS">
@@ -27,35 +27,39 @@
 
 <body>
 
-    <div class="siga-topbar">
+    <!-- HEADER FIJO DE LA APP: "Volver a SIGA" siempre en su propia fila,
+         arriba de todo, en las 4 pantallas. El selector de tema vive AHORA
+         adentro de este mismo header (antes flotaba aparte con position:fixed
+         y por eso se superponía con el título en la pantalla de notas). -->
+    <header class="siga-topbar">
         <a href="https://harrypc2023.github.io/portal-siga/dashboard.html">← Volver a SIGA</a>
-    </div>
 
-    <!-- SELECTOR DE TEMA — MENÚ DESPLEGABLE (pantallas 3 y 4) -->
-    <div class="contenedor-tema" id="contenedor-tema" style="display:none;">
-        <button class="btn-tema-trigger" onclick="toggleDropdownTema()">
-            <span class="tema-icono" id="tema-icono-activo">☀️</span>
-            <span id="tema-label-activo">Light</span>
-            <span class="tema-flecha">▼</span>
-        </button>
-        <div class="tema-dropdown">
-            <button class="tema-opcion activo" data-tema="light" onclick="seleccionarTema('light')">
-                <span class="opcion-icono">☀️</span> Light
+        <!-- SELECTOR DE TEMA — MENÚ DESPLEGABLE (solo pantallas 3 y 4) -->
+        <div class="contenedor-tema" id="contenedor-tema" style="display:none;">
+            <button class="btn-tema-trigger" onclick="toggleDropdownTema()">
+                <span class="tema-icono" id="tema-icono-activo">🎓</span>
+                <span id="tema-label-activo">SIGA</span>
+                <span class="tema-flecha">▼</span>
             </button>
-            <button class="tema-opcion" data-tema="dark" onclick="seleccionarTema('dark')">
-                <span class="opcion-icono">🌙</span> Dark
-            </button>
-            <button class="tema-opcion" data-tema="ocean" onclick="seleccionarTema('ocean')">
-                <span class="opcion-icono">🌊</span> Ocean
-            </button>
-            <button class="tema-opcion" data-tema="forest" onclick="seleccionarTema('forest')">
-                <span class="opcion-icono">🌿</span> Forest
-            </button>
-            <button class="tema-opcion" data-tema="siga" onclick="seleccionarTema('siga')">
-                <span class="opcion-icono">🎓</span> SIGA
-            </button>
+            <div class="tema-dropdown">
+                <button class="tema-opcion" data-tema="light" onclick="seleccionarTema('light')">
+                    <span class="opcion-icono">☀️</span> Light
+                </button>
+                <button class="tema-opcion" data-tema="dark" onclick="seleccionarTema('dark')">
+                    <span class="opcion-icono">🌙</span> Dark
+                </button>
+                <button class="tema-opcion" data-tema="ocean" onclick="seleccionarTema('ocean')">
+                    <span class="opcion-icono">🌊</span> Ocean
+                </button>
+                <button class="tema-opcion" data-tema="forest" onclick="seleccionarTema('forest')">
+                    <span class="opcion-icono">🌿</span> Forest
+                </button>
+                <button class="tema-opcion activo" data-tema="siga" onclick="seleccionarTema('siga')">
+                    <span class="opcion-icono">🎓</span> SIGA
+                </button>
+            </div>
         </div>
-    </div>
+    </header>
 
     <!-- PANTALLA 1: BIENVENIDA -->
     <div id="pantalla-1" class="pantalla pantalla-bienvenida activa">

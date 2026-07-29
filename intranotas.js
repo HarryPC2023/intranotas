@@ -1499,7 +1499,16 @@ function aplicarTema(tema) {
     const gradiente = `linear-gradient(135deg, ${ini} 0%, ${fin} 100%)`;
 
     document.querySelectorAll('.pantalla-bienvenida, .pantalla-seleccion-carrera').forEach(p => {
-        p.style.background = gradiente;
+        if (tema === 'siga') {
+            /* El tema SIGA no usa un degradado plano: usa el degradado
+               CON MOVIMIENTO definido en siga-theme-intranotas.css (el
+               mismo de la sección INFO de la web). Si le pusiéramos aquí
+               un background inline, taparíamos esa animación —por eso
+               lo limpiamos y dejamos que mande la regla CSS. */
+            p.style.background = '';
+        } else {
+            p.style.background = gradiente;
+        }
     });
     document.querySelectorAll('.pantalla-configuracion, .pantalla-simulador').forEach(p => {
         p.style.backgroundColor = vars['--color-fondo-body'];

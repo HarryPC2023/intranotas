@@ -1,22 +1,72 @@
 /* ============================================================
-   TEMA SIGA para Intranotas
-   Cargar DESPUÉS de intranotas.css. Los colores en sí se resuelven
-   con el tema "siga" que se agrega a TEMAS en intranotas.js
-   (ver instrucciones) — este archivo solo cubre tipografía,
-   bordes y sombras, que el sistema de temas no controla.
+   TEMA SIGA para Intranotas — v2
+   Cargar DESPUÉS de intranotas.css (así el cascade puede pisar
+   sus reglas sin necesitar !important en casi nada). Este archivo
+   es la ÚNICA fuente de identidad de marca: intranotas.css (el
+   núcleo de la app) no se toca, para no chocar con futuras
+   actualizaciones de Harry.
+
+   Los colores "funcionales" del núcleo (verde=aprobado/guardar,
+   rojo=riesgo/desaprobado/limpiar, ámbar=alerta) se dejan tal cual
+   están: son semántica de estado, no identidad visual, y tocarlos
+   podría confundir la lectura de notas/riesgo.
    ============================================================ */
 
-body,
-body * {
-  font-family: 'Orbitron', sans-serif !important;
+/* ---------- 1. PALETA: mismas variables que usa TEMAS.siga en
+   intranotas.js, pero declaradas también en CSS puro. Esto evita
+   el "flash" del celeste viejo en el primer instante, antes de que
+   el JS pinte el tema guardado. ---------- */
+:root {
+  --color-cian: #6600CC;
+  --color-cian-hover: #4f0099;
+  --color-cian-light: #F3EAFB;
+  --color-verde-oscuro: #3C7CF8;
+  --color-azul: #3C7CF8;
+  --color-azul-claro: #EAF2FF;
+  --color-gris-texto: #4A4A4A;
+  --color-gris-claro: #DDD9CE;
+  --color-fondo-input: #EAF2FF;
+  --color-fondo-tarjeta: #ffffff;
+  --color-fondo-body: #FFFDF9;
+
+  /* Tinte de marca para el degradado con movimiento (el mismo tono
+     que usa la sección INFO de la web) */
+  --siga-azul-tinte: #EAF2FF;
+  --siga-header-alto: 54px;
 }
 
+body {
+  background-color: var(--color-fondo-body);
+}
+
+/* ---------- 2. TIPOGRAFÍA: Orbitron / Black Ops One SOLO en
+   elementos tipo wordmark o en el header compartido con la web.
+   El resto de la app (botones, tarjetas, inputs, notas) se queda
+   con Poppins/Montserrat — forzar Orbitron en todo el texto se veía
+   pesado en una pantalla con tanto número y dato pequeño. ---------- */
 .titulo-intranotas {
   font-family: 'Black Ops One', sans-serif !important;
   letter-spacing: 0.02em;
 }
 
-/* Tarjetas: mismo lenguaje visual que el resto de SIGA */
+/* El pulso del título ahora usa las variables de tema (azul/morado
+   de marca) en vez de verde/cian sueltos — de paso, funciona bien
+   sin importar qué tema esté activo. */
+@keyframes pulse-intranotas {
+
+  0%,
+  100% {
+    color: var(--color-verde-oscuro);
+  }
+
+  50% {
+    color: var(--color-cian);
+  }
+}
+
+/* ---------- 3. TARJETAS Y BOTONES: mismo lenguaje visual que el
+   resto de SIGA. Las formas NO cambian (siguen siendo píldora /
+   bordes redondeados), solo color y sombra. ---------- */
 .tarjeta-curso,
 .acordeon,
 .seccion-selector-ciclo {
@@ -25,7 +75,6 @@ body * {
   border: none !important;
 }
 
-/* Botones principales en pastilla */
 .btn-ingresar-principal,
 .btn-carrera,
 .btn-volver-carrera,
@@ -44,29 +93,107 @@ body * {
   box-shadow: 0 8px 18px rgba(102, 0, 204, 0.28) !important;
 }
 
-/* Barra de vuelta a SIGA — ver instrucciones para el href real */
+/* ---------- 4. FONDO CON MOVIMIENTO (pantallas 1 y 2) — el mismo
+   degradado animado que la sección INFO de la web: azul-tinte ->
+   blanco -> azul-tinte, deslizándose muy suave. Reemplaza el
+   celeste saturado y estático que traía la app. ---------- */
+.pantalla-bienvenida,
+.pantalla-seleccion-carrera {
+  background: linear-gradient(120deg, var(--siga-azul-tinte) 0%, #ffffff 55%, var(--siga-azul-tinte) 100%);
+  background-size: 220% 220%;
+  animation: sigaFondoMovimiento 14s ease-in-out infinite;
+  min-height: calc(100vh - var(--siga-header-alto));
+}
+
+@keyframes sigaFondoMovimiento {
+  0% {
+    background-position: 10% 30%;
+  }
+
+  50% {
+    background-position: 90% 70%;
+  }
+
+  100% {
+    background-position: 10% 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .pantalla-bienvenida,
+  .pantalla-seleccion-carrera {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}
+
+/* ---------- 5. HEADER "Volver a SIGA" + selector de tema ----------
+   Antes eran dos elementos con position:fixed flotando por separado
+   (.siga-topbar y .contenedor-tema), lo que hacía que se superpusieran
+   con el título y los botones de la pantalla de notas. Ahora son UN
+   solo header sticky: reserva su propio espacio en el documento, así
+   que el contenido de abajo nunca queda tapado, en ninguna de las 4
+   pantallas. */
 .siga-topbar {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
   z-index: 500;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 10px;
-  padding: 10px 18px;
-  background: rgba(255, 255, 255, 0.92);
+  min-height: var(--siga-header-alto);
+  padding: 12px 18px;
+  background: rgba(255, 253, 249, 0.92);
   backdrop-filter: blur(6px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  font-size: 13px;
-  font-weight: 600;
 }
 
 .siga-topbar a {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.02em;
   color: #6600CC;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .siga-topbar a:hover {
   text-decoration: underline;
+}
+
+/* El selector de tema ahora es un hijo más del header (ya no flota
+   aparte): se le quita el position:fixed que traía en intranotas.css
+   y se deja "relative" para que su dropdown siga anclado bien. */
+.contenedor-tema {
+  position: relative;
+  top: auto;
+  left: auto;
+}
+
+.btn-tema-trigger,
+.tema-opcion {
+  font-family: 'Orbitron', sans-serif;
+}
+
+@media (max-width: 480px) {
+  .siga-topbar {
+    padding: 10px 14px;
+  }
+
+  .siga-topbar a {
+    font-size: 12px;
+  }
+}
+
+/* ---------- 6. Los modales deben quedar SIEMPRE por encima del
+   header sticky (antes su z-index de 300 era menor al del selector
+   de tema flotante, un bug menor que de paso se corrige). ---------- */
+.modal-overlay {
+  z-index: 600;
 }
