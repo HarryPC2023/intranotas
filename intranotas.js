@@ -1461,6 +1461,28 @@ const TEMAS = {
             '--color-fondo-gradiente-inicio': '#d1fae5',
             '--color-fondo-gradiente-fin': '#bbf7d0',
         }
+    },
+    siga: {
+        label: '🎓 SIGA',
+        vars: {
+            '--color-cian': '#6600CC',
+            '--color-cian-hover': '#4f0099',
+            '--color-cian-light': '#F3EAFB',
+            '--color-verde-oscuro': '#3C7CF8',
+            '--color-azul': '#3C7CF8',
+            '--color-azul-claro': '#EAF2FF',
+            '--color-gris-texto': '#4A4A4A',
+            '--color-gris-claro': '#DDD9CE',
+            '--color-verde-btn': '#10b981',
+            '--color-rojo-btn': '#ef4444',
+            '--color-fondo-input': '#EAF2FF',
+            '--color-fondo-body': '#FFFDF9',
+            '--color-fondo-tarjeta': '#ffffff',
+            '--color-texto-principal': '#000000',
+            '--color-texto-nombre': '#000000',
+            '--color-fondo-gradiente-inicio': '#EAF2FF',
+            '--color-fondo-gradiente-fin': '#F3EAFB',
+        }
     }
 };
 
@@ -1520,7 +1542,7 @@ function seleccionarTema(tema) {
 }
 
 function inicializarTema() {
-    const guardado = localStorage.getItem('intranotas_tema') || 'light';
+    const guardado = localStorage.getItem('intranotas_tema') || 'siga';
     aplicarTema(guardado);
 }
 

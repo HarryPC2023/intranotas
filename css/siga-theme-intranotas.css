@@ -1,0 +1,72 @@
+/* ============================================================
+   TEMA SIGA para Intranotas
+   Cargar DESPUÉS de intranotas.css. Los colores en sí se resuelven
+   con el tema "siga" que se agrega a TEMAS en intranotas.js
+   (ver instrucciones) — este archivo solo cubre tipografía,
+   bordes y sombras, que el sistema de temas no controla.
+   ============================================================ */
+
+body,
+body * {
+  font-family: 'Orbitron', sans-serif !important;
+}
+
+.titulo-intranotas {
+  font-family: 'Black Ops One', sans-serif !important;
+  letter-spacing: 0.02em;
+}
+
+/* Tarjetas: mismo lenguaje visual que el resto de SIGA */
+.tarjeta-curso,
+.acordeon,
+.seccion-selector-ciclo {
+  border-radius: 18px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+  border: none !important;
+}
+
+/* Botones principales en pastilla */
+.btn-ingresar-principal,
+.btn-carrera,
+.btn-volver-carrera,
+.btn-guardar,
+.btn-flotante {
+  border-radius: 999px !important;
+}
+
+.btn-ciclo {
+  border-radius: 14px !important;
+}
+
+.btn-ingresar-principal:hover,
+.btn-guardar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(102, 0, 204, 0.28) !important;
+}
+
+/* Barra de vuelta a SIGA — ver instrucciones para el href real */
+.siga-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.siga-topbar a {
+  color: #6600CC;
+  text-decoration: none;
+}
+
+.siga-topbar a:hover {
+  text-decoration: underline;
+}
