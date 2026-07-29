@@ -34,15 +34,18 @@
     <header class="siga-topbar">
         <a href="https://harrypc2023.github.io/portal-siga/dashboard.html">← Volver a SIGA</a>
 
-        <!-- SELECTOR DE TEMA — MENÚ DESPLEGABLE (solo pantallas 3 y 4) -->
+        <!-- SELECTOR DE TEMA — MENÚ DESPLEGABLE (solo pantallas 3 y 4).
+             "Light" ES el tema de marca SIGA: no hay una opción aparte
+             llamada "SIGA", la app ya viene con esas tonalidades por
+             defecto. -->
         <div class="contenedor-tema" id="contenedor-tema" style="display:none;">
             <button class="btn-tema-trigger" onclick="toggleDropdownTema()">
-                <span class="tema-icono" id="tema-icono-activo">🎓</span>
-                <span id="tema-label-activo">SIGA</span>
+                <span class="tema-icono" id="tema-icono-activo">☀️</span>
+                <span id="tema-label-activo">Light</span>
                 <span class="tema-flecha">▼</span>
             </button>
             <div class="tema-dropdown">
-                <button class="tema-opcion" data-tema="light" onclick="seleccionarTema('light')">
+                <button class="tema-opcion activo" data-tema="light" onclick="seleccionarTema('light')">
                     <span class="opcion-icono">☀️</span> Light
                 </button>
                 <button class="tema-opcion" data-tema="dark" onclick="seleccionarTema('dark')">
@@ -53,9 +56,6 @@
                 </button>
                 <button class="tema-opcion" data-tema="forest" onclick="seleccionarTema('forest')">
                     <span class="opcion-icono">🌿</span> Forest
-                </button>
-                <button class="tema-opcion activo" data-tema="siga" onclick="seleccionarTema('siga')">
-                    <span class="opcion-icono">🎓</span> SIGA
                 </button>
             </div>
         </div>

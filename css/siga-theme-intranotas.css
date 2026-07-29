@@ -12,10 +12,11 @@
    podría confundir la lectura de notas/riesgo.
    ============================================================ */
 
-/* ---------- 1. PALETA: mismas variables que usa TEMAS.siga en
-   intranotas.js, pero declaradas también en CSS puro. Esto evita
-   el "flash" del celeste viejo en el primer instante, antes de que
-   el JS pinte el tema guardado. ---------- */
+/* ---------- 1. PALETA: mismas variables que usa TEMAS.light en
+   intranotas.js (el tema de marca SIGA — ya NO existe un tema aparte
+   llamado "SIGA": Light ES el tema de marca), declaradas también en
+   CSS puro. Esto evita el "flash" del celeste viejo en el primer
+   instante, antes de que el JS pinte el tema guardado. ---------- */
 :root {
   --color-cian: #6600CC;
   --color-cian-hover: #4f0099;
@@ -29,9 +30,14 @@
   --color-fondo-tarjeta: #ffffff;
   --color-fondo-body: #FFFDF9;
 
-  /* Tinte de marca para el degradado con movimiento (el mismo tono
-     que usa la sección INFO de la web) */
+  /* Tinte de marca para los fondos con degradado. --siga-lila es el
+     tono que más debe notarse (lavanda/lila, el mismo de la paleta
+     pastel oficial de SIGA); azul y morado quedan como acentos en
+     los extremos, no como protagonistas — y el blanco puro queda
+     fuera del degradado a propósito, para que no "lave" el color. */
   --siga-azul-tinte: #EAF2FF;
+  --siga-lila: #E4CAF6;
+  --siga-morado-tinte: #F3EAFB;
   --siga-header-alto: 54px;
 }
 
@@ -93,13 +99,16 @@ body {
   box-shadow: 0 8px 18px rgba(102, 0, 204, 0.28) !important;
 }
 
-/* ---------- 4. FONDO CON MOVIMIENTO (pantallas 1 y 2) — el mismo
-   degradado animado que la sección INFO de la web: azul-tinte ->
-   blanco -> azul-tinte, deslizándose muy suave. Reemplaza el
-   celeste saturado y estático que traía la app. ---------- */
+/* ---------- 4. FONDO DE MARCA (LAS 4 PANTALLAS) — antes solo las
+   pantallas 1 y 2 tenían color, y era tan pálido que casi no se
+   notaba. Ahora las 4 llevan el mismo degradado azul -> LILA ->
+   morado (sin ningún tramo blanco, para que el color no se lave):
+   en Bienvenida y Selección de carrera se mueve suavemente (como en
+   la web); en Selección de ciclo/cursos y Simulador queda fijo, sin
+   movimiento, para no distraer mientras se llenan notas. ---------- */
 .pantalla-bienvenida,
 .pantalla-seleccion-carrera {
-  background: linear-gradient(120deg, var(--siga-azul-tinte) 0%, #ffffff 55%, var(--siga-azul-tinte) 100%);
+  background: linear-gradient(120deg, var(--siga-azul-tinte) 0%, var(--siga-lila) 50%, var(--siga-morado-tinte) 100%);
   background-size: 220% 220%;
   animation: sigaFondoMovimiento 14s ease-in-out infinite;
   min-height: calc(100vh - var(--siga-header-alto));
@@ -126,6 +135,11 @@ body {
     animation: none;
     background-position: 50% 50%;
   }
+}
+
+.pantalla-configuracion,
+.pantalla-simulador {
+  background: linear-gradient(160deg, var(--siga-azul-tinte) 0%, var(--siga-lila) 45%, var(--siga-morado-tinte) 100%);
 }
 
 /* ---------- 5. HEADER "Volver a SIGA" + selector de tema ----------

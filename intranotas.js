@@ -1377,23 +1377,23 @@ const TEMAS = {
     light: {
         label: '☀️ Light',
         vars: {
-            '--color-cian': '#00bcd4',
-            '--color-cian-hover': '#0097a7',
-            '--color-cian-light': '#e0f7fa',
-            '--color-verde-oscuro': '#004d40',
-            '--color-azul': '#2196f3',
-            '--color-azul-claro': '#e3f2fd',
-            '--color-gris-texto': '#4b5563',
-            '--color-gris-claro': '#d1d5db',
+            '--color-cian': '#6600CC',
+            '--color-cian-hover': '#4f0099',
+            '--color-cian-light': '#F3EAFB',
+            '--color-verde-oscuro': '#3C7CF8',
+            '--color-azul': '#3C7CF8',
+            '--color-azul-claro': '#EAF2FF',
+            '--color-gris-texto': '#4A4A4A',
+            '--color-gris-claro': '#DDD9CE',
             '--color-verde-btn': '#10b981',
             '--color-rojo-btn': '#ef4444',
-            '--color-fondo-input': '#f0faff',
-            '--color-fondo-body': '#f8fafc',
+            '--color-fondo-input': '#EAF2FF',
+            '--color-fondo-body': '#FFFDF9',
             '--color-fondo-tarjeta': '#ffffff',
-            '--color-texto-principal': '#1f2937',
-            '--color-texto-nombre': '#1f2937',
-            '--color-fondo-gradiente-inicio': '#f8fafc',
-            '--color-fondo-gradiente-fin': '#e0f7fa',
+            '--color-texto-principal': '#000000',
+            '--color-texto-nombre': '#000000',
+            '--color-fondo-gradiente-inicio': '#EAF2FF',
+            '--color-fondo-gradiente-fin': '#F3EAFB',
         }
     },
     dark: {
@@ -1461,28 +1461,6 @@ const TEMAS = {
             '--color-fondo-gradiente-inicio': '#d1fae5',
             '--color-fondo-gradiente-fin': '#bbf7d0',
         }
-    },
-    siga: {
-        label: '🎓 SIGA',
-        vars: {
-            '--color-cian': '#6600CC',
-            '--color-cian-hover': '#4f0099',
-            '--color-cian-light': '#F3EAFB',
-            '--color-verde-oscuro': '#3C7CF8',
-            '--color-azul': '#3C7CF8',
-            '--color-azul-claro': '#EAF2FF',
-            '--color-gris-texto': '#4A4A4A',
-            '--color-gris-claro': '#DDD9CE',
-            '--color-verde-btn': '#10b981',
-            '--color-rojo-btn': '#ef4444',
-            '--color-fondo-input': '#EAF2FF',
-            '--color-fondo-body': '#FFFDF9',
-            '--color-fondo-tarjeta': '#ffffff',
-            '--color-texto-principal': '#000000',
-            '--color-texto-nombre': '#000000',
-            '--color-fondo-gradiente-inicio': '#EAF2FF',
-            '--color-fondo-gradiente-fin': '#F3EAFB',
-        }
     }
 };
 
@@ -1499,19 +1477,26 @@ function aplicarTema(tema) {
     const gradiente = `linear-gradient(135deg, ${ini} 0%, ${fin} 100%)`;
 
     document.querySelectorAll('.pantalla-bienvenida, .pantalla-seleccion-carrera').forEach(p => {
-        if (tema === 'siga') {
-            /* El tema SIGA no usa un degradado plano: usa el degradado
-               CON MOVIMIENTO definido en siga-theme-intranotas.css (el
-               mismo de la sección INFO de la web). Si le pusiéramos aquí
-               un background inline, taparíamos esa animación —por eso
-               lo limpiamos y dejamos que mande la regla CSS. */
+        if (tema === 'light') {
+            /* "Light" ES el tema de marca SIGA: usa el degradado CON
+               MOVIMIENTO definido en siga-theme-intranotas.css (el mismo
+               de la sección INFO de la web). Si le pusiéramos aquí un
+               background inline, taparíamos esa animación —por eso lo
+               limpiamos y dejamos que mande la regla CSS. */
             p.style.background = '';
         } else {
             p.style.background = gradiente;
         }
     });
     document.querySelectorAll('.pantalla-configuracion, .pantalla-simulador').forEach(p => {
-        p.style.backgroundColor = vars['--color-fondo-body'];
+        if (tema === 'light') {
+            /* Mismo criterio: en Light, el tinte de marca (fijo, sin
+               movimiento, para no distraer mientras se llenan notas)
+               viene del CSS, no de un color plano por JS. */
+            p.style.background = '';
+        } else {
+            p.style.background = vars['--color-fondo-body'];
+        }
     });
     document.body.style.backgroundColor = vars['--color-fondo-body'];
 
@@ -1551,7 +1536,9 @@ function seleccionarTema(tema) {
 }
 
 function inicializarTema() {
-    const guardado = localStorage.getItem('intranotas_tema') || 'siga';
+    let guardado = localStorage.getItem('intranotas_tema') || 'light';
+    /* Migración: el tema 'siga' de la versión anterior ahora ES 'light'. */
+    if (guardado === 'siga') guardado = 'light';
     aplicarTema(guardado);
 }
 
