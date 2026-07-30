@@ -1498,7 +1498,18 @@ function aplicarTema(tema) {
             p.style.background = vars['--color-fondo-body'];
         }
     });
-    document.body.style.backgroundColor = vars['--color-fondo-body'];
+    if (tema === 'light') {
+        /* Light usa el degradado del ecosistema SIGA definido en CSS
+           (body { background-image: linear-gradient(...) }). Si le
+           pusiéramos aquí un color plano inline, no taparía el
+           degradado (background-color e background-image son capas
+           distintas), pero sí lo haría en los demás temas —así que,
+           para mantenerlo simple y consistente, limpiamos el inline
+           únicamente en Light y dejamos que mande el CSS. */
+        document.body.style.background = '';
+    } else {
+        document.body.style.background = vars['--color-fondo-body'];
+    }
 
     document.querySelectorAll('.tarjeta-curso, .acordeon, .seccion-selector-ciclo').forEach(el => {
         el.style.backgroundColor = vars['--color-fondo-tarjeta'];
