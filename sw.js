@@ -3,7 +3,7 @@
    Estrategia: Cache-First para assets estáticos
    ============================================================ */
 
-const CACHE_NAME = 'intranotas-v36';
+const CACHE_NAME = 'intranotas-v37';
 
 /* Todos los archivos que deben estar disponibles offline */
 const ARCHIVOS_A_CACHEAR = [
@@ -11,6 +11,7 @@ const ARCHIVOS_A_CACHEAR = [
     './intranotas.css',
     './intranotas.js',
     './cursos_db.js',
+    './css/siga-theme-intranotas.css',
     './manifest.json',
     './icon-192.png',
     './icon-512.png',
@@ -19,7 +20,8 @@ const ARCHIVOS_A_CACHEAR = [
     './industrial.png',
     './software.png',
     /* Fuentes de Google — se cachean en el primer uso */
-    'https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap'
+    'https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap',
+    'https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Orbitron:wght@500;600;700&display=swap'
 ];
 
 /* ── INSTALL: precachear todos los archivos del proyecto ── */
