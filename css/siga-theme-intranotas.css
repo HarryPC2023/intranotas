@@ -52,8 +52,53 @@ body {
   animation: sigaFondoMovimiento 14s ease-in-out infinite;
 }
 
+/* ---------- FONDO ANIMADO PARA DARK / OCEAN / FOREST — mismo
+   mecanismo que el body de arriba (degradado diagonal de dos
+   colores + animación sigaFondoMovimiento), pero usando el cian/azul
+   propios de cada tema en vez de los colores fijos del ecosistema
+   SIGA. El JS (aplicarTema() en intranotas.js) solo agrega la clase
+   correspondiente al body; el color base y el degradado los resuelve
+   este CSS. background-color usa var(--color-fondo-body) para leer
+   en vivo el valor que el JS ya setea en :root, así no hay que
+   repetir el hex acá ni arriesgarse a que se desincronicen. ---------- */
+body.tema-dark,
+body.tema-ocean,
+body.tema-forest {
+  background-color: var(--color-fondo-body);
+  background-size: 200% 200%;
+  animation: sigaFondoMovimiento 14s ease-in-out infinite;
+}
+
+body.tema-dark {
+  background-image: linear-gradient(135deg,
+      rgba(77, 208, 225, 0.40) 0%,
+      rgba(77, 208, 225, 0.40) 26%,
+      rgba(100, 181, 246, 0.12) 78%,
+      rgba(100, 181, 246, 0.12) 100%);
+}
+
+body.tema-ocean {
+  background-image: linear-gradient(135deg,
+      rgba(3, 105, 161, 0.15) 0%,
+      rgba(3, 105, 161, 0.15) 26%,
+      rgba(109, 40, 217, 0.18) 78%,
+      rgba(109, 40, 217, 0.18) 100%);
+}
+
+body.tema-forest {
+  background-image: linear-gradient(135deg,
+      rgba(21, 128, 61, 0.15) 0%,
+      rgba(21, 128, 61, 0.15) 26%,
+      rgba(180, 83, 9, 0.22) 78%,
+      rgba(180, 83, 9, 0.22) 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  body {
+
+  body,
+  body.tema-dark,
+  body.tema-ocean,
+  body.tema-forest {
     animation: none;
     background-position: 50% 50%;
   }

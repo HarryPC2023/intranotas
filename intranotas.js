@@ -1498,17 +1498,21 @@ function aplicarTema(tema) {
             p.style.background = vars['--color-fondo-body'];
         }
     });
+    /* Degradado animado del body: Light lo trae fijo en CSS (body{...}),
+       sin clase. Dark/Ocean/Forest usan el MISMO mecanismo (degradado
+       diagonal de dos colores + animación sigaFondoMovimiento), pero
+       con los colores cian/azul propios de cada tema — definidos en
+       CSS bajo body.tema-{dark|ocean|forest} (ver siga-theme-intranotas.css).
+       Por eso primero se limpia cualquier clase de tema anterior, y
+       nunca se usa un background-color plano por JS: así el CSS puede
+       leer var(--color-fondo-body) en vivo y no hay dos mecanismos
+       compitiendo por pintar el fondo. */
+    document.body.classList.remove('tema-dark', 'tema-ocean', 'tema-forest');
     if (tema === 'light') {
-        /* Light usa el degradado del ecosistema SIGA definido en CSS
-           (body { background-image: linear-gradient(...) }). Si le
-           pusiéramos aquí un color plano inline, no taparía el
-           degradado (background-color e background-image son capas
-           distintas), pero sí lo haría en los demás temas —así que,
-           para mantenerlo simple y consistente, limpiamos el inline
-           únicamente en Light y dejamos que mande el CSS. */
         document.body.style.background = '';
     } else {
-        document.body.style.background = vars['--color-fondo-body'];
+        document.body.style.background = '';
+        document.body.classList.add('tema-' + tema);
     }
 
     document.querySelectorAll('.tarjeta-curso, .acordeon, .seccion-selector-ciclo').forEach(el => {
