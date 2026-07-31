@@ -1488,15 +1488,15 @@ function aplicarTema(tema) {
             p.style.background = gradiente;
         }
     });
+    /* Igual que en Light: estas dos pantallas se dejan transparentes —la
+       regla ".pantalla-configuracion, .pantalla-simulador { background:
+       transparent }" de siga-theme-intranotas.css ya lo garantiza— para
+       que se vea el degradado animado del body por debajo. Antes, para
+       Dark/Ocean/Forest, aquí se pintaba un color plano por JS que tapaba
+       por completo ese degradado (por eso no se notaba en pantalla,
+       aunque el degradado del body sí se aplicaba bien). */
     document.querySelectorAll('.pantalla-configuracion, .pantalla-simulador').forEach(p => {
-        if (tema === 'light') {
-            /* Mismo criterio: en Light, el tinte de marca (fijo, sin
-               movimiento, para no distraer mientras se llenan notas)
-               viene del CSS, no de un color plano por JS. */
-            p.style.background = '';
-        } else {
-            p.style.background = vars['--color-fondo-body'];
-        }
+        p.style.background = '';
     });
     /* Degradado animado del body: Light lo trae fijo en CSS (body{...}),
        sin clase. Dark/Ocean/Forest usan el MISMO mecanismo (degradado
