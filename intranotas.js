@@ -250,8 +250,10 @@ function seleccionarCarrera(carrera) {
     periodoSeleccionado = null;
     cursosSeleccionados = [];
 
-    const labelCarrera = document.getElementById('nombre-carrera-activa');
-    if (labelCarrera) labelCarrera.textContent = NOMBRES_CARRERAS[carrera];
+    actualizarResumenCarrera();
+    mostrarSelectorCarrera(false);
+    const bloque = document.getElementById('bloque-periodo-cursos');
+    if (bloque) bloque.style.display = 'block';
 
     irAPantalla(3);
 
@@ -260,6 +262,43 @@ function seleccionarCarrera(carrera) {
         generarOpcionesPeriodo();
         marcarCursosSeleccionadosEnUI();
     }, 50);
+}
+
+/* ============================================================
+   BLOQUE DE CARRERA COLAPSABLE (PANTALLA 3)
+   Reemplaza a la vieja pantalla-2 — la carrera casi nunca cambia,
+   así que vive plegada arriba en vez de ocupar una pantalla propia.
+   ============================================================ */
+function actualizarResumenCarrera() {
+    const texto = document.getElementById('carrera-resumen-texto');
+    if (texto) texto.textContent = carreraSeleccionada ? NOMBRES_CARRERAS[carreraSeleccionada] : 'Selecciona tu carrera';
+}
+
+function mostrarSelectorCarrera(expandido) {
+    const grid = document.getElementById('grid-carreras-colapsable');
+    const flecha = document.getElementById('carrera-resumen-flecha');
+    if (grid) grid.style.display = expandido ? 'grid' : 'none';
+    if (flecha) flecha.textContent = expandido ? '▴' : '▾';
+}
+
+function toggleSelectorCarrera() {
+    const grid = document.getElementById('grid-carreras-colapsable');
+    if (!grid) return;
+    const expandido = grid.style.display !== 'none';
+    mostrarSelectorCarrera(!expandido);
+}
+
+function cambiarCarrera() {
+    mostrarSelectorCarrera(true);
+    const bloque = document.getElementById('bloque-periodo-cursos');
+    if (bloque) bloque.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function desmarcarTodosLosCursos() {
+    document.querySelectorAll('.curso-checkbox').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.curso-item.seleccionado').forEach(item => item.classList.remove('seleccionado'));
+    actualizarContadores();
 }
 
 /* ============================================================
@@ -466,8 +505,21 @@ function generarSimulador() {
                 <span class="carrera-label">${NOMBRES_CARRERAS[carreraSeleccionada]}</span>
                 <select id="selector-periodos-guardados" class="select-periodo" onchange="cambiarPeriodoGuardado(this.value)"></select>
             </div>
-            <button class="btn-volver" onclick="irAPantalla(3)">← Cambiar cursos</button>
         </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
+            <button class="btn-volver" onclick="irAPantalla(3)" style="flex:1; min-width:140px;">← Cambiar cursos</button>
+            <button class="btn-volver" onclick="resetearApp()" style="flex:1; min-width:140px;">🔄 Nuevo periodo</button>
+        </div>
+
+        <details style="margin:12px 0; background:var(--color-fondo-input); border-radius:10px; padding:10px 14px;">
+            <summary style="cursor:pointer; font-weight:600; font-size:0.85rem; color:var(--color-cian);">💾 ¿Sabías que puedes guardar varios periodos?</summary>
+            <p style="font-size:0.82rem; color:var(--color-gris-texto); margin:8px 0 0; line-height:1.6;">
+                Cada periodo que armes se guarda por separado. Para guardar otro: toca "🔄 Nuevo periodo" (arriba),
+                elige tus cursos, ingresa tus notas y presiona "💾 Guardar". Puedes volver a cualquier periodo
+                guardado desde el selector de arriba en cualquier momento.
+            </p>
+        </details>
 
         <div class="banner-ponderado">
             <span class="banner-ponderado-label">PONDERADO CICLO</span>
@@ -1378,6 +1430,9 @@ function cambiarPeriodoGuardado(periodo) {
     cursosSeleccionados = entrada.cursos;
     periodoSeleccionado = periodo;
     generarSimulador();
+
+    desmarcarTodosLosCursos();
+    marcarCursosSeleccionadosEnUI();
 }
 
 function limpiarTodo() {
@@ -1436,11 +1491,21 @@ function cerrarModalReset() {
 
 function confirmarResetearApp() {
     cerrarModalReset();
-    carreraSeleccionada = null;
-    periodoSeleccionado = null;
+    /* Ya no se borra la carrera — casi nunca cambia entre un periodo y
+       otro. "Nuevo periodo" solo limpia el periodo y los cursos en
+       pantalla, y te deja en Pantalla 3 listo para elegir el nuevo,
+       sin pasar por elegir carrera de nuevo. */
     cursosSeleccionados = [];
-    irAPantalla(2);
-    mostrarToast('🔄 Elige tu carrera para configurar un nuevo periodo');
+    periodoSeleccionado = null;
+
+    irAPantalla(3);
+    const bloque = document.getElementById('bloque-periodo-cursos');
+    if (bloque) bloque.style.display = 'block';
+    mostrarSelectorCarrera(false);
+    desmarcarTodosLosCursos();
+    generarOpcionesPeriodo();
+
+    mostrarToast('🔄 Elige el periodo y los cursos que quieres guardar');
 }
 
 /* ============================================================
@@ -1679,10 +1744,11 @@ function intentarRestaurarSesion() {
         periodoSeleccionado = ultimoPeriodo;
         cursosSeleccionados = entrada.cursos;
 
-        const labelCarrera = document.getElementById('nombre-carrera-activa');
-        if (labelCarrera) labelCarrera.textContent = NOMBRES_CARRERAS[carreraSeleccionada];
-
         // Prepara la Pantalla 3 en segundo plano por si el usuario pulsa "Cambiar cursos"
+        actualizarResumenCarrera();
+        mostrarSelectorCarrera(false);
+        const bloque = document.getElementById('bloque-periodo-cursos');
+        if (bloque) bloque.style.display = 'block';
         generarAcordeones();
         generarOpcionesPeriodo();
         marcarCursosSeleccionadosEnUI();
